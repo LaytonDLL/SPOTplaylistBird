@@ -1,105 +1,96 @@
-# 🎵 Spotify Playlist Filler
+# 🎵 SPOTplaylistBird
 
-Adicione até **10.000 músicas** em uma playlist do Spotify baseado no gênero escolhido!
+**Crie Playlists Gigantes no Spotify em Segundos.**
 
-## 📋 Requisitos
+Este projeto permite criar playlists massivas (até 10.000 músicas) baseadas em gêneros musicais, utilizando a API do Spotify. É ideal para descobrir novas músicas ou preencher bibliotecas de acordo com estilos específicos.
 
-- Python 3.8+
-- Conta no Spotify
-- Credenciais do Spotify Developer
+![Project Banner](webapp/public/logo.png)
 
-## 🚀 Instalação
+---
 
-### 1. Instalar dependências
+## 🚀 Como Usar (Guia Rápido)
 
-```bash
-# Criar ambiente virtual (recomendado)
-python3 -m venv venv
-source venv/bin/activate
+### 1. Pré-requisitos
+- Ter o **Python 3.8+** instalado.
+- Ter o **Node.js 18+** instalado (para a interface visual).
+- Uma conta no **Spotify** (Free ou Premium).
 
-# Instalar dependências
-pip install -r requirements.txt
-```
-
-### 2. Configurar credenciais do Spotify
-
-1. Acesse [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Clique em **Create App**
-3. Preencha:
-   - **App name**: Playlist Filler (ou qualquer nome)
-   - **App description**: Script para preencher playlists
-   - **Redirect URI**: `http://localhost:8888/callback`
-4. Clique em **Settings** e copie:
-   - **Client ID**
-   - **Client Secret**
-5. Configure o arquivo `.env`:
+### 2. Instalação
+Abra o terminal na pasta do projeto e execute:
 
 ```bash
-cp .env.example .env
-nano .env  # ou use seu editor preferido
+# 1. Instalar dependências do Python
+pip install spotipy python-dotenv fastapi uvicorn
+
+# 2. Instalar dependências da Interface (React)
+cd webapp
+npm install
+cd ..
 ```
 
-Preencha com suas credenciais:
-```
-SPOTIPY_CLIENT_ID=seu_client_id_aqui
-SPOTIPY_CLIENT_SECRET=seu_client_secret_aqui
-SPOTIPY_REDIRECT_URI=http://localhost:8888/callback
-```
+### 3. Executando o Projeto
 
-## 🎮 Como usar
+O projeto possui um comando facilitador que inicia tudo (Servidor + Interface) e abre o navegador automaticamente.
+
+No terminal, na raiz do projeto, execute:
 
 ```bash
-# Ativar ambiente virtual (se não estiver ativo)
-source venv/bin/activate
+# Dar permissão de execução (apenas na primeira vez)
+chmod +x run.sh
 
-# Executar o script
-python spotify_filler.py
+# Iniciar o projeto
+./run.sh
 ```
 
-O script vai:
-1. Abrir seu navegador para autenticação
-2. Mostrar os gêneros disponíveis
-3. Pedir para escolher um gênero
-4. Pedir a quantidade de músicas (1-10000)
-5. Criar uma nova playlist
-6. Adicionar as músicas!
+O navegador abrirá automaticamente em `http://localhost:5173`.
 
-## 🎸 Gêneros disponíveis
+---
 
-O script suporta mais de 100 gêneros, incluindo:
+## 🔑 Como Obter o Token de Acesso
 
-| | | | |
-|---|---|---|---|
-| rock | pop | hip-hop | electronic |
-| jazz | blues | classical | country |
-| metal | punk | reggae | r-n-b |
-| sertanejo | pagode | mpb | funk |
-| k-pop | j-pop | anime | ... |
+O projeto utiliza um **Token de Acesso** temporário do Spotify para garantir segurança e funcionar com qualquer conta.
 
-## ⚠️ Limitações
+1. Acesse o **Spotify Developer Console** (Link seguro oficial):
+   👉 [https://developer.spotify.com/console/post-playlists/](https://developer.spotify.com/console/post-playlists/)
 
-- **Máximo de 10.000 músicas por playlist** (limite do Spotify)
-- O script pode não encontrar 10.000 músicas únicas para todos os gêneros
-- Rate limiting da API pode causar lentidão
+2. Clique no botão verde **GET TOKEN**.
 
-## 🔧 Solução de Problemas
+3. Selecione as seguintes permissões (checkboxes):
+   - `playlist-modify-public`
+   - `playlist-modify-private`
 
-### Erro de autenticação
-- Verifique se as credenciais no `.env` estão corretas
-- Certifique-se de que a Redirect URI no Dashboard é exatamente `http://localhost:8888/callback`
+4. Clique em **Request Token**.
 
-### Poucas músicas encontradas
-- Alguns gêneros têm menos músicas disponíveis
-- Tente gêneros mais populares como `pop`, `rock`, `hip-hop`
+5. Faça login na sua conta Spotify (se solicitado).
 
-### Rate limiting
-- O script já inclui delays automáticos
-- Se persistir, aguarde alguns minutos e tente novamente
+6. Copie o código longo gerado no campo **OAuth Token**.
+
+7. Cole este código na tela inicial do **SPOTplaylistBird**.
+
+---
+
+## 🛠️ Solução de Problemas Comuns
+
+### "O botão 'Connect' fica carregando infinitamente"
+- **Causa**: O token expirou ou é inválido.
+- **Solução**: Gere um novo token seguindo os passos acima e tente novamente.
+
+### "Erro 429 ou Rate Limit"
+- **Causa**: Você fez muitas requisições em pouco tempo. O Spotify bloqueia temporariamente por segurança.
+- **Solução**: Aguarde alguns minutos e tente novamente.
+
+### "Não abre o navegador"
+- Tente acessar manualmente: `http://localhost:5173`
+
+---
+
+## 📦 Estrutura do Projeto
+
+- `run.sh`: Script principal de inicialização.
+- `server.py`: Servidor Backend (Python/FastAPI) que se comunica com o Spotify.
+- `webapp/`: Interface Visual (React/Vite).
+- `spotify_filler.py`: Versão somente linha de comando (CLI) alternativa.
 
 ## 📝 Licença
 
-MIT License - Use como quiser!
-
-## 🙏 Créditos
-
-Criado com ❤️ por Antigravity AI usando a biblioteca [Spotipy](https://spotipy.readthedocs.io/)
+Este projeto é de código aberto e destinado a fins educacionais e pessoais. Use com responsabilidade.

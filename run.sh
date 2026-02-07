@@ -20,6 +20,13 @@ cd webapp
 npm run dev -- --host &
 FRONTEND_PID=$!
 
+# Abrir o navegador automaticamente
+echo "🌐 Abrindo navegador em http://localhost:5173..."
+sleep 3
+if command -v xdg-open &> /dev/null; then
+    xdg-open http://localhost:5173 > /dev/null 2>&1 &
+fi
+
 echo "✅ Frontend rodando!"
 echo "--------------------------------------------------"
 echo "🌐 ACESSE AGORA: http://localhost:5173"

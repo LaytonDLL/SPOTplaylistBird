@@ -221,46 +221,44 @@ def create_playlists_logic(sp, user_id, genres, all_tracks, base_name, base_desc
 # ERROR HANDLING
 # ==========================================
 def handle_spotify_error(e):
-    if hasattr(e, 'http_status'):
-        status = e.http_status
-        
-        if status == 400:
+    # Detect status from message if not provided as attribute
+    status_code = getattr(e, 'http_status', None)
+    if not status_code:
+        msg = str(e).lower()
+        if '429' in msg: status_code = 429
+        elif '401' in msg: status_code = 401
+        elif '403' in msg: status_code = 403
+
+    if status_code == 400:
              return {
                 "status": "bad_request",
                 "message": "⚠️ Solicitação inválida. Verifique se o token tem as permissões corretas."
             }
-        elif status == 401:
+    elif status_code == 401:
             return {
                 "status": "auth_error",
                 "message": "🔒 Token inválido ou expirado. Por favor, gere um novo token no Developer Console."
             }
-        elif status == 403:
+    elif status_code == 429 or status_code == -1: # -1 is often used by spotipy for many retries failing
+            retry_after = 30 # Default if not found
+            if hasattr(e, 'headers') and e.headers.get("Retry-After"):
+                retry_after = int(e.headers.get("Retry-After"))
+            
+            return {
+                "status": "rate_limit",
+                "message": f"⏳ O Spotify bloqueou temporariamente (Rate Limit). Espere um momento antes de tentar novamente.",
+                "retry_after": retry_after
+            }
+    elif status_code == 403:
              return {
                 "status": "forbidden",
                 "message": "🚫 Acesso negado. Seu token não tem permissão para criar playlists (playlist-modify-public/private)."
-            }
-        elif status == 404:
-             return {
-                "status": "not_found",
-                "message": "❓ Recurso não encontrado no Spotify."
-            }
-        elif status == 429:
-            retry_after = int(e.headers.get("Retry-After", 5)) if hasattr(e, 'headers') else 5
-            return {
-                "status": "rate_limit",
-                "message": f"⏳ Limite de taxa excedido (Rate Limit). O Spotify bloqueou temporariamente. Espere {retry_after}s.",
-                "retry_after": retry_after
-            }
-        elif status >= 500:
-             return {
-                "status": "server_error",
-                "message": "🔥 Erro nos servidores do Spotify. Tente novamente mais tarde."
             }
             
     # Generic Catch-All
     return {
         "status": "error",
-        "message": f"Erro inesperado: {str(e)}"
+        "message": f"Erro Spotify: {str(e)}"
     }
 
 # ==========================================
@@ -276,6 +274,7 @@ def get_genres():
 
 @app.post("/authenticate")
 def authenticate(req: TokenRequest):
+    start_time = time.time()
     try:
         # Token Cleanup
         clean_token = req.token
@@ -283,16 +282,24 @@ def authenticate(req: TokenRequest):
             clean_token = clean_token.split("Bearer")[-1]
         clean_token = clean_token.replace("'", "").replace('"', "").replace("\\", "").strip()
 
-        sp = spotipy.Spotify(auth=clean_token)
+        print(f"DEBUG: Authenticating token (len: {len(clean_token)})...")
+        # Set short timeout and no retries for initial auth to respond fast to UI
+        sp = spotipy.Spotify(auth=clean_token, requests_timeout=5, status_retries=0)
         user = sp.current_user()
+        
+        duration = time.time() - start_time
+        print(f"DEBUG: Auth successful for {user['display_name']} in {duration:.2f}s")
+        
         return {
             "status": "success", 
             "user": user['display_name'], 
             "id": user['id'], 
             "image": user['images'][0]['url'] if user['images'] else None,
-            "cleaned_token": clean_token # Send back cleaned token for future use
+            "cleaned_token": clean_token 
         }
     except Exception as e:
+        duration = time.time() - start_time
+        print(f"DEBUG: Auth failed after {duration:.2f}s: {str(e)}")
         return handle_spotify_error(e)
 
 @app.post("/execute")

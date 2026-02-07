@@ -149,7 +149,13 @@ function App() {
       showNotification("Error: " + e.message, "error")
       setStatus('Failed')
     } finally {
-      setTimeout(() => setStatus(''), 2000)
+      // Only clear if we didn't already transition to dashboard
+      // Or if there was an error, wait a bit for feedback
+      if (view !== 'dashboard') {
+        setTimeout(() => setStatus(''), 2000)
+      } else {
+        setStatus('')
+      }
     }
   }
 
@@ -246,7 +252,7 @@ function App() {
         transition={{ duration: 19, repeat: Infinity, delay: 0, ease: "easeInOut" }}
       />
 
-      <AnimatePresence mode='wait'>
+      <AnimatePresence>
 
         {view === 'login' && (
           <motion.div
@@ -308,7 +314,12 @@ function App() {
               </button>
             </div>
 
-            <button className="shiny-button" onClick={handleLogin}>
+            <button
+              className="shiny-button"
+              onClick={handleLogin}
+              disabled={!!status}
+              style={{ opacity: status ? 0.7 : 1, cursor: status ? 'not-allowed' : 'pointer' }}
+            >
               {status || 'Connect to Spotify'}
             </button>
             <a href="https://developer.spotify.com/console/post-playlists/" target="_blank" style={{ color: 'white', marginTop: 15, fontSize: 12, opacity: 0.7 }}>Get Token Here</a>
