@@ -48,3 +48,4 @@ webapp/dist/
 # Spotify Cache
 .spotify_cache
 .cache
+.antigravity-kit/
