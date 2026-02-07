@@ -1,0 +1,650 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --font-family: 'Inter', sans-serif;
+  --spotify-green: #1DB954;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #000;
+  /* Root fallback */
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* CUSTOM GLASS SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: transparent;
+  /* Transparent to show fixed layers */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* CONTAINER CENTERING (CRITICAL) */
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  /* Removed z-index to avoid trapping fixed bg */
+  padding: 60px 20px;
+  overflow-y: auto;
+
+  /* Hide Scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.app-container::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+/* 1. BACKGROUND ENGINE */
+.bg-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  /* Base level, above HTML bg */
+
+  /* User-Provided Fluid Background */
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Glass Overlay on Background - Frosted Glass Effect */
+/* Glass Overlay on Background - Soft Grain & Light Frost */
+.bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  /* ON TOP of bg-layer */
+
+  /* Frosted Glass Base - Very Sheer */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.3);
+
+  /* The Blur Magic - Minimal (6px) */
+  backdrop-filter: blur(6px) saturate(110%);
+  -webkit-backdrop-filter: blur(6px) saturate(110%);
+
+  /* Glass Edge Highlight - Faint */
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Noise Texture (Very Subtle) */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* 2. AURORA GLASS CARD - Increased Opacity per Request */
+.glass-card {
+  /* Complex Gradient Glass - More Transparent with Subtle Grain */
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+    linear-gradient(135deg,
+      rgba(80, 40, 255, 0.4) 0%,
+      rgba(0, 200, 255, 0.3) 50%,
+      rgba(50, 255, 150, 0.35) 100%);
+
+  background-blend-mode: overlay;
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border-radius: 40px;
+  padding: 40px 50px;
+  width: 100%;
+  max-width: 900px;
+  /* Wider container */
+  margin: auto;
+  /* Center in flex container */
+
+  /* Glossy Borders (Rim Light) */
+  border-top: 2px solid rgba(255, 255, 255, 0.6);
+  border-left: 2px solid rgba(255, 255, 255, 0.4);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  box-shadow:
+    0 30px 60px -15px rgba(0, 0, 0, 0.8),
+    /* Darker shadow */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 20px 40px rgba(255, 255, 255, 0.2);
+
+  position: relative;
+  z-index: 20;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+}
+
+/* Lens flare / Gloss overlay inside the card */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0.3;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* 3. INPUT CAPSULES */
+.input-capsule {
+  width: 100%;
+  position: relative;
+}
+
+.input-capsule input {
+  width: 100%;
+  height: 60px;
+  border-radius: 999px;
+  border: none;
+
+  /* Indented Glass Look */
+  background: rgba(255, 255, 255, 0.20);
+  /* Slightly more opaque */
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  color: white;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.input-capsule input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.input-capsule input:focus {
+  background: rgba(255, 255, 255, 0.30);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(255, 255, 255, 0.4);
+  transform: scale(1.02);
+}
+
+/* 4. BUTTON (Monochromatic Soft White/Grey/Black) */
+.shiny-button {
+  /* Linear Gradient: White -> Soft Grey */
+  background: linear-gradient(180deg, #FFFFFF 0%, #E0E0E0 100%);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  border-radius: 999px;
+  padding: 16px 48px;
+
+  /* Text Color: Dark Graphite/Black for contrast against white */
+  color: #1a1a1a;
+
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+
+  /* Soft Shadow */
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.2),
+    /* Subtle black shadow */
+    inset 0 2px 3px rgba(255, 255, 255, 1);
+
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s, background 0.2s;
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.shiny-button:hover {
+  transform: scale(1.05) translateY(-2px);
+  /* Hover: Slightly brighter (Pure White) */
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%);
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.3),
+    inset 0 2px 3px rgba(255, 255, 255, 1);
+}
+
+.shiny-button:active {
+  transform: scale(0.98);
+  background: #E0E0E0;
+}
+
+/* Shimmer Effect on Button (Black shimmer for white btn) */
+.shiny-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  /* Subtle dark shimmer */
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: 0.5s;
+}
+
+.shiny-button:hover::after {
+  left: 100%;
+}
+
+/* Typography */
+h1 {
+  color: white;
+  text-align: center;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.5px;
+}
+
+/* 5. LOGO (UPDATED SIZE) */
+/* 5. LOGO WRAPPER & ANIMATION */
+.logo-wrapper {
+  position: relative;
+  display: inline-flex;
+  border-radius: 22px;
+  padding: 2px;
+  /* Espessura da borda de luz */
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Luz Circulante (Spinning Light) */
+.logo-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(transparent,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.9) 45%,
+      /* Pico de luz */
+      transparent 50%);
+  animation: rotateBorder 3s linear infinite;
+  z-index: 0;
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.app-logo {
+  width: 150px;
+  height: auto;
+  border-radius: 20px;
+
+  /* Glass Effect (Fundo Interno) */
+  background-color: rgba(255, 255, 255, 0.85);
+  /* Mais opaco para contraste */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.10'/%3E%3C/svg%3E");
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  padding: 15px;
+  position: relative;
+  z-index: 1;
+  /* Fica acima da luz */
+}
+
+
+/* Floating 3D Bubbles */
+/* Floating 3D Bubbles - Themed Colors + Grainy Transparency */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+
+  /* More Transparent Gradient with Themes + Noise */
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.3'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 30% 30%,
+      rgba(80, 255, 180, 0.4),
+      /* Highlight (Greenish) - More transparent */
+      rgba(0, 200, 255, 0.3) 30%,
+      /* Mid (Cyan) */
+      rgba(80, 40, 255, 0.2) 60%,
+      /* Shadow (Violet) */
+      rgba(80, 40, 255, 0.05) 100%);
+
+  background-blend-mode: overlay;
+
+  /* Colored glow */
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.2),
+    /* Subtle Inner white rim */
+    0 0 15px rgba(0, 200, 255, 0.15);
+  /* Subtle Outer cyan glow */
+
+  backdrop-filter: blur(5px);
+  z-index: 10;
+  pointer-events: none;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* REMOVE SCROLL/SPIN BUTTONS */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* NOTIFICATION TOAST */
+.notification-toast {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  right: auto;
+  transform: translateY(-50%);
+  z-index: 1000;
+
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  font-family: var(--font-family);
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+  border-left: 5px solid #333;
+}
+
+.notification-toast.success {
+  border-left-color: #1DB954;
+  /* Spotify Green */
+  color: #0d4620;
+}
+
+.notification-toast.error {
+  border-left-color: #ff4444;
+  color: #6d0a0a;
+}
+
+/* RESPONSIVE LAYOUT STYLES */
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+
+  /* Tablet / Medium Screens */
+  .glass-card {
+    padding: 30px 25px;
+    border-radius: 30px;
+    max-width: 92%;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .input-capsule {
+    width: 100% !important;
+    margin-bottom: 0;
+  }
+
+  /* Adjust Track Quantity label specifically on mobile */
+  .input-capsule span[style*="top: -20"] {
+    top: -24px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Mobile Screens */
+  .glass-card {
+    padding: 24px 20px;
+    border-radius: 24px;
+    width: 94%;
+  }
+
+  .logout-btn {
+    top: 15px;
+    right: 15px;
+    padding: 6px 14px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .logout-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin-top: 15px;
+    margin-bottom: 25px !important;
+    text-align: center;
+  }
+
+  .notification-toast {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    min-width: 0;
+    top: 60px;
+    transform: none;
+    justify-content: center;
+    font-size: 13px;
+    padding: 12px 20px;
+  }
+}
+
+/* GENRE BUTTONS & MAGIC BORDER ANIMATION */
+.genre-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  transition: all 0.2s;
+  position: relative;
+  /* Essential for pseudo-elements */
+  z-index: 1;
+  /* Keep content above border */
+  overflow: hidden;
+  /* Clip the spinning border inside the radius */
+  box-sizing: border-box;
+}
+
+.genre-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.genre-btn.selected {
+  color: white;
+  /* Bold font for selected state */
+  font-weight: 600;
+  /* Transparent background to show the 'inner' green pseudo-element */
+  background: transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 1. The Spinning Colorful Border (Behind) */
+.genre-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 500%;
+  /* Large enough to cover rotation */
+  background: conic-gradient(transparent,
+      #ff0080,
+      #ff8c00,
+      #40e0d0,
+      #1db954,
+      #ff0080,
+      transparent);
+  animation: border-spin 4s linear infinite;
+  transform: translate(-50%, -50%);
+  z-index: -2;
+
+  /* Smooth Transition Props */
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.genre-btn.selected::before {
+  opacity: 1;
+}
+
+/* 2. The Inner Green Button (Masking the center) */
+.genre-btn::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  /* Defines border thickness */
+  background: #1DB954;
+  /* Spotify Green Main Color */
+  border-radius: 18px;
+  /* Slightly smaller than parent */
+  z-index: -1;
+
+  /* Smooth Transition Props */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.genre-btn.selected::after {
+  opacity: 1;
+}
+
+@keyframes border-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
