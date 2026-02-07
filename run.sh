@@ -6,7 +6,18 @@ fuser -k 5173/tcp 2>/dev/null
 
 # Iniciar o Backend (FastAPI) em background
 echo "🚀 Iniciando Servidor Backend (FastAPI)..."
-source venv/bin/activate
+
+# Verificar e criar venv se não existir
+if [ ! -d "venv" ]; then
+    echo "⚠️  Ambiente virtual não encontrado. Criando..."
+    python3 -m venv venv
+    source venv/bin/activate
+    echo "📦 Instalando dependências do Python..."
+    pip install -r requirements.txt
+else
+    source venv/bin/activate
+fi
+
 nohup uvicorn server:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
 BACKEND_PID=$!
 echo "✅ Backend rodando (PID: $BACKEND_PID)"
@@ -17,6 +28,12 @@ sleep 2
 # Iniciar o Frontend (React/Vite)
 echo "🎨 Iniciando Interface Frontend (React)..."
 cd webapp
+
+if [ ! -d "node_modules" ]; then
+    echo "📦 Instalando dependências do Frontend..."
+    npm install
+fi
+
 npm run dev -- --host &
 FRONTEND_PID=$!
 

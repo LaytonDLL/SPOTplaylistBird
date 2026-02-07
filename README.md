@@ -30,16 +30,42 @@ cd ..
 
 ### 3. Executando o Projeto
 
-O projeto possui um comando facilitador que inicia tudo (Servidor + Interface) e abre o navegador automaticamente.
+O projeto já inclui scripts de inicialização automática para facilitar o uso.
 
-No terminal, na raiz do projeto, execute:
+**Windows:**
+1. Execute o arquivo `web-spotplaylistbird.bat` (duplo clique).
+2. O script procurará automaticamente onde o projeto está instalado e iniciará tudo.
 
+**Linux / macOS:**
+1. No terminal, dê permissão de execução:
+   ```bash
+   chmod +x web-spotplaylistbird.sh
+   ```
+2. Inicie o launcher:
+   ```bash
+   ./web-spotplaylistbird.sh
+   ```
+
+Este launcher é "inteligente": se você mover o script para outra pasta (ex: Área de Trabalho) ou criar um atalho, ele ainda conseguirá encontrar o projeto original e iniciá-lo corretamente.
+
+---
+
+### Instalação Manual (Alternativa)
+
+Se preferir rodar manualmente:
+
+#### Linux / macOS
 ```bash
-# Dar permissão de execução (apenas na primeira vez)
+# Dar permissão de execução
 chmod +x run.sh
 
 # Iniciar o projeto
 ./run.sh
+```
+
+#### Windows
+```cmd
+run_windows.bat
 ```
 
 O navegador abrirá automaticamente em `http://localhost:5173`.
