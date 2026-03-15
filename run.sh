@@ -18,7 +18,7 @@ else
     source venv/bin/activate
 fi
 
-nohup uvicorn server:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
+nohup ./venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
 BACKEND_PID=$!
 echo "✅ Backend rodando (PID: $BACKEND_PID)"
 
